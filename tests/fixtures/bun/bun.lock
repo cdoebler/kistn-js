@@ -1,0 +1,19 @@
+{
+  "lockfileVersion": 0,
+  "workspaces": {
+    "": {
+      "name": "fixture-app",
+      "dependencies": {
+        "lodash": "^4.17.21",
+      },
+      "devDependencies": {
+        "typescript": "^5.4.0",
+      },
+    },
+  },
+  "packages": {
+    "has-flag": ["has-flag@4.0.0", "", {}, "sha512-EXAMPLE"],
+    "lodash": ["lodash@4.17.21", "", {}, "sha512-EXAMPLE"],
+    "typescript": ["typescript@5.4.5", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-EXAMPLE"],
+  },
+}

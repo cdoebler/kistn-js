@@ -1,0 +1,6 @@
+module.exports = {
+  base_url: 'https://your-server.example',
+  project_id: 'your-project-uuid-here',
+  token: 'your-api-token-here',
+  transmit_files: 'always', // 'always' | 'never' | 'on_demand'
+};

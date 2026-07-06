@@ -1,0 +1,45 @@
+{
+  "name": "@kistn/js-client",
+  "version": "0.0.1",
+  "description": "Framework-agnostic Node client for the Kistn API. Supports npm, pnpm, yarn, and bun.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "bin": {
+    "kistn-push": "dist/bin/kistn-push.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "ci:check": "npm run typecheck && npm run test && npm run build"
+  },
+  "dependencies": {
+    "@yarnpkg/lockfile": "^1.1.0",
+    "jsonc-parser": "^3.2.0",
+    "yaml": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.5.0"
+  }
+}

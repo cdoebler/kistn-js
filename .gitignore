@@ -1,0 +1,8 @@
+.idea
+node_modules/
+dist/
+coverage/
+.inventory.hash
+kistn.config.js
+kistn.config.json
+*.tsbuildinfo

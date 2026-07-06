@@ -1,0 +1,40 @@
+lockfileVersion: '6.0'
+
+dependencies:
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
+
+devDependencies:
+  typescript:
+    specifier: ^5.4.0
+    version: 5.4.5
+
+packages:
+  /has-flag@4.0.0:
+    resolution: {integrity: sha512-EXAMPLE}
+    engines: {node: '>=8'}
+    dev: false
+
+  /lodash@4.17.21:
+    resolution: {integrity: sha512-EXAMPLE}
+    dev: false
+
+  /typescript@5.4.5:
+    resolution: {integrity: sha512-EXAMPLE}
+    dependencies:
+      has-flag: 4.0.0
+    dev: true
+    hasBin: true
+
+  /@scope/pkg@1.0.0:
+    resolution: {integrity: sha512-EXAMPLE}
+    dev: false
+
+  /eslint-plugin-react@7.30.0_eslint@8.10.0:
+    resolution: {integrity: sha512-EXAMPLE}
+    dev: false
+
+  /@typescript-eslint/parser@5.0.0_eslint@8.10.0:
+    resolution: {integrity: sha512-EXAMPLE}
+    dev: false
