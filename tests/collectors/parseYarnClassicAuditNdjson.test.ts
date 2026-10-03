@@ -24,11 +24,17 @@ describe('parseYarnClassicAuditNdjson', () => {
     expect(parseYarnClassicAuditNdjson(ndjson, {})).toEqual([]);
   });
 
-  it('falls back to unknown name and advisoryId when module_name/url are missing or unmatched', () => {
-    const ndjson = JSON.stringify({ type: 'auditAdvisory', data: { advisory: { severity: 'high', url: 'https://example.com/no-ghsa' } } });
+  it('falls back to unknown name and the first CVE when module_name/url are missing or unmatched', () => {
+    const ndjson = JSON.stringify({ type: 'auditAdvisory', data: { advisory: { severity: 'high', url: 'https://example.com/no-ghsa', cves: ['CVE-2024-4068'] } } });
 
     const findings = parseYarnClassicAuditNdjson(ndjson, {});
 
-    expect(findings).toEqual([{ packageName: 'unknown', packageVersion: '*', advisoryId: 'unknown', severity: 'high' }]);
+    expect(findings).toEqual([{ packageName: 'unknown', packageVersion: '*', advisoryId: 'CVE-2024-4068', severity: 'high' }]);
+  });
+
+  it('skips advisories without any identifier', () => {
+    const ndjson = JSON.stringify({ type: 'auditAdvisory', data: { advisory: { module_name: 'braces', severity: 'high', url: 'https://example.com/no-ghsa' } } });
+
+    expect(parseYarnClassicAuditNdjson(ndjson, {})).toEqual([]);
   });
 });

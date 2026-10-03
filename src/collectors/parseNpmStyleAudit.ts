@@ -1,4 +1,5 @@
 import { Finding } from '../dto/types';
+import { advisoryIdOf } from './advisoryIdOf';
 import { normalizeSeverity } from './normalizeSeverity';
 
 export function parseNpmStyleAudit(rawJson: string, installedVersions: Record<string, string>): Finding[] {
@@ -16,38 +17,32 @@ export function parseNpmStyleAudit(rawJson: string, installedVersions: Record<st
   const findings: Finding[] = [];
 
   for (const [key, vuln] of Object.entries<any>(data.vulnerabilities)) {
-    if (typeof vuln !== 'object' || vuln === null) {
+    if (typeof vuln !== 'object' || vuln === null || !Array.isArray(vuln.via)) {
       continue;
     }
 
     const name: string = typeof vuln.name === 'string' ? vuln.name : key;
-    const severity = normalizeSeverity(vuln.severity);
-    const advisoryId = extractAdvisoryId(vuln.via);
 
-    findings.push({
-      packageName: name,
-      packageVersion: installedVersions[name] ?? '*',
-      advisoryId,
-      severity,
-    });
-  }
-
-  return findings;
-}
-
-function extractAdvisoryId(via: unknown): string {
-  if (!Array.isArray(via)) {
-    return 'unknown';
-  }
-
-  for (const item of via) {
-    if (typeof item === 'object' && item !== null && typeof item.url === 'string') {
-      const match = item.url.match(/GHSA-[a-z0-9-]+/i);
-      if (match) {
-        return match[0];
+    // String `via` entries only name a vulnerable dependency ("Depends on vulnerable versions of X");
+    // that dependency is reported with its own advisory, so they are not findings of this package.
+    for (const item of vuln.via) {
+      if (typeof item !== 'object' || item === null) {
+        continue;
       }
+
+      const advisoryId = advisoryIdOf(item);
+      if (advisoryId === null) {
+        continue;
+      }
+
+      findings.push({
+        packageName: name,
+        packageVersion: installedVersions[name] ?? '*',
+        advisoryId,
+        severity: normalizeSeverity(item.severity ?? vuln.severity),
+      });
     }
   }
 
-  return 'unknown';
+  return findings;
 }

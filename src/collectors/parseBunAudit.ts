@@ -1,4 +1,5 @@
 import { Finding } from '../dto/types';
+import { advisoryIdOf } from './advisoryIdOf';
 import { normalizeSeverity } from './normalizeSeverity';
 
 // bun audit --json outputs: { "<package-name>": [{ id, url, title, severity, ... }] }
@@ -27,28 +28,19 @@ export function parseBunAudit(rawJson: string, installedVersions: Record<string,
         continue;
       }
 
-      const severity = normalizeSeverity(advisory.severity);
-      const advisoryId = extractAdvisoryId(advisory);
+      const advisoryId = advisoryIdOf(advisory);
+      if (advisoryId === null) {
+        continue;
+      }
 
       findings.push({
         packageName,
         packageVersion: installedVersions[packageName] ?? '*',
         advisoryId,
-        severity,
+        severity: normalizeSeverity(advisory.severity),
       });
     }
   }
 
   return findings;
-}
-
-function extractAdvisoryId(advisory: any): string {
-  if (typeof advisory.url === 'string') {
-    const match = advisory.url.match(/GHSA-[a-z0-9-]+/i);
-    if (match) {
-      return match[0];
-    }
-  }
-
-  return 'unknown';
 }

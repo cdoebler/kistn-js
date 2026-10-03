@@ -1,4 +1,5 @@
 import { Finding } from '../dto/types';
+import { advisoryIdOf } from './advisoryIdOf';
 import { normalizeSeverity } from './normalizeSeverity';
 
 export function parsePnpmAudit(rawJson: string, installedVersions: Record<string, string>): Finding[] {
@@ -20,32 +21,20 @@ export function parsePnpmAudit(rawJson: string, installedVersions: Record<string
       continue;
     }
 
+    const advisoryId = advisoryIdOf(advisory);
+    if (advisoryId === null) {
+      continue;
+    }
+
     const name: string = typeof advisory.module_name === 'string' ? advisory.module_name : 'unknown';
-    const severity = normalizeSeverity(advisory.severity);
-    const advisoryId = extractAdvisoryId(advisory);
 
     findings.push({
       packageName: name,
       packageVersion: installedVersions[name] ?? '*',
       advisoryId,
-      severity,
+      severity: normalizeSeverity(advisory.severity),
     });
   }
 
   return findings;
-}
-
-function extractAdvisoryId(advisory: any): string {
-  if (typeof advisory.github_advisory_id === 'string' && advisory.github_advisory_id.length > 0) {
-    return advisory.github_advisory_id;
-  }
-
-  if (typeof advisory.url === 'string') {
-    const match = advisory.url.match(/GHSA-[a-z0-9-]+/i);
-    if (match) {
-      return match[0];
-    }
-  }
-
-  return 'unknown';
 }

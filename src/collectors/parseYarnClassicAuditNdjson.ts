@@ -1,4 +1,5 @@
 import { Finding } from '../dto/types';
+import { advisoryIdOf } from './advisoryIdOf';
 import { normalizeSeverity } from './normalizeSeverity';
 
 export function parseYarnClassicAuditNdjson(rawOutput: string, installedVersions: Record<string, string>): Finding[] {
@@ -21,15 +22,18 @@ export function parseYarnClassicAuditNdjson(rawOutput: string, installedVersions
     }
 
     const advisory = parsed.data.advisory;
+    const advisoryId = advisoryIdOf(advisory);
+    if (advisoryId === null) {
+      continue;
+    }
+
     const name = typeof advisory.module_name === 'string' ? advisory.module_name : 'unknown';
-    const severity = normalizeSeverity(advisory.severity);
-    const urlMatch = typeof advisory.url === 'string' ? advisory.url.match(/GHSA-[a-z0-9-]+/i) : null;
 
     findings.push({
       packageName: name,
       packageVersion: installedVersions[name] ?? '*',
-      advisoryId: urlMatch ? urlMatch[0] : 'unknown',
-      severity,
+      advisoryId,
+      severity: normalizeSeverity(advisory.severity),
     });
   }
 

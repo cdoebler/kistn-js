@@ -58,24 +58,22 @@ describe('parseBunAudit', () => {
     expect(findings[1]).toMatchObject({ packageName: 'minimist', packageVersion: '0.0.8', severity: 'critical' });
   });
 
-  it('falls back to unknown advisoryId when url contains no GHSA id', () => {
+  it('falls back to the npm advisory id when url contains no GHSA id', () => {
     const rawJson = JSON.stringify({
       lodash: [{ id: 1, url: 'https://example.com/no-ghsa', severity: 'low' }],
     });
 
     const findings = parseBunAudit(rawJson, {});
 
-    expect(findings).toEqual([{ packageName: 'lodash', packageVersion: '*', advisoryId: 'unknown', severity: 'low' }]);
+    expect(findings).toEqual([{ packageName: 'lodash', packageVersion: '*', advisoryId: 'NPM-1', severity: 'low' }]);
   });
 
-  it('falls back to unknown advisoryId when url is absent', () => {
+  it('skips advisories without any identifier', () => {
     const rawJson = JSON.stringify({
-      lodash: [{ id: 1, severity: 'low' }],
+      lodash: [{ url: 'https://example.com/no-ghsa', severity: 'low' }],
     });
 
-    const findings = parseBunAudit(rawJson, {});
-
-    expect(findings).toEqual([{ packageName: 'lodash', packageVersion: '*', advisoryId: 'unknown', severity: 'low' }]);
+    expect(parseBunAudit(rawJson, {})).toEqual([]);
   });
 
   it('falls back to low severity when severity field is missing', () => {

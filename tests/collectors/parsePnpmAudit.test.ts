@@ -47,16 +47,22 @@ describe('parsePnpmAudit', () => {
     ]);
   });
 
-  it('returns unknown advisoryId when neither github_advisory_id nor a matching url is present', () => {
+  it('falls back to the npm advisory id when neither github_advisory_id nor a matching url is present', () => {
     const rawJson = JSON.stringify({
       advisories: {
-        '1': { module_name: 'lodash', severity: 'low' },
+        '1': { id: 1096410, module_name: 'lodash', severity: 'low' },
       },
     });
 
     const findings = parsePnpmAudit(rawJson, {});
 
-    expect(findings).toEqual([{ packageName: 'lodash', packageVersion: '*', advisoryId: 'unknown', severity: 'low' }]);
+    expect(findings).toEqual([{ packageName: 'lodash', packageVersion: '*', advisoryId: 'NPM-1096410', severity: 'low' }]);
+  });
+
+  it('skips advisories without any identifier', () => {
+    const rawJson = JSON.stringify({ advisories: { '1': { module_name: 'lodash', severity: 'low' } } });
+
+    expect(parsePnpmAudit(rawJson, {})).toEqual([]);
   });
 
   it('returns an empty array for malformed JSON', () => {
