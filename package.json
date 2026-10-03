@@ -1,6 +1,6 @@
 {
   "name": "@kistn/js-client",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Framework-agnostic Node client for the Kistn API. Supports npm, pnpm, yarn, and bun.",
   "license": "MIT",
   "type": "module",
