@@ -111,6 +111,14 @@ describe('InventoryPusher', () => {
     expect(client.uploadFiles).toHaveBeenCalledWith({ 'package-lock.json': '/path/to/package-lock.json' });
   });
 
+  it('does not upload files when no TransmitMode is given', async () => {
+    const pusher = new InventoryPusher(client, [makeCollector()], cache);
+    await pusher.pushAll();
+
+    expect(client.push).toHaveBeenCalledTimes(1);
+    expect(client.uploadFiles).not.toHaveBeenCalled();
+  });
+
   it('does not upload files when TransmitMode.Never', async () => {
     const collector = makeCollector();
     const pusher = new InventoryPusher(client, [collector], cache, TransmitMode.Never);

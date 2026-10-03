@@ -15,7 +15,7 @@ export class InventoryPusher {
     private readonly client: InventoryClientLike,
     private readonly collectors: CollectorInterface[],
     private readonly cache: LocalHashCache,
-    private readonly transmitFiles: TransmitMode = TransmitMode.Always,
+    private readonly transmitFiles: TransmitMode = TransmitMode.Never,
   ) {}
 
   async pushAll(): Promise<void> {

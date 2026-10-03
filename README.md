@@ -17,11 +17,25 @@ module.exports = {
   base_url: 'https://your-server.example',
   project_id: 'your-project-uuid-here',
   token: 'your-api-token-here',
-  transmit_files: 'always', // 'always' | 'never' | 'on_demand'
+  transmit_files: 'never', // 'never' (default) | 'always' | 'on_demand'
 };
 ```
 
 Or set `KISTN_BASE_URL`, `KISTN_PROJECT_ID`, `KISTN_TOKEN` env vars (override file values).
+
+### Lockfile upload (`transmit_files`)
+
+Every push sends the package inventory (names, versions, dependency flags) and your local audit findings.
+Your lockfile and `package.json` are **not** uploaded unless you opt in:
+
+| Value | Behaviour |
+|---|---|
+| `never` (default, also used for missing/invalid values) | No files are uploaded. |
+| `always` | Upload lockfile + `package.json` whenever the package list changed. |
+| `on_demand` | Upload only when the package manager CLI is unavailable locally, so the server can run the audit instead. |
+
+Uploaded files let the Kistn server run its own audit and cross-check your local findings. They contain
+your full dependency tree, so enable this only if you are fine sharing that data with the server.
 
 > **Security:** `kistn.config.js` is executed as code when loaded (so it can read env vars, etc.).
 > Anyone who can write it into your project root gets code execution wherever the CLI runs,
@@ -43,7 +57,7 @@ Detects your package manager from the lockfile present (`bun.lock` → `pnpm-loc
 3. Collect packages by parsing the lockfile directly.
 4. Compute content hash — skip ecosystem if it matches the server's.
 5. POST bundled payload (all changed ecosystems in one call).
-6. Upload lockfile + `package.json` for ecosystems with package-level changes (per `transmit_files` mode).
+6. Upload lockfile + `package.json` for ecosystems with package-level changes — only if `transmit_files` is enabled (off by default).
 7. Store lockfile hash in local cache.
 
 ## Known Limitations (v1)

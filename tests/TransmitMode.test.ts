@@ -8,8 +8,8 @@ describe('parseTransmitMode', () => {
     expect(parseTransmitMode('on_demand')).toBe(TransmitMode.OnDemand);
   });
 
-  it('defaults to Always for unknown/missing values', () => {
-    expect(parseTransmitMode(undefined)).toBe(TransmitMode.Always);
-    expect(parseTransmitMode('bogus')).toBe(TransmitMode.Always);
+  it('defaults to Never for unknown/missing values', () => {
+    expect(parseTransmitMode(undefined)).toBe(TransmitMode.Never);
+    expect(parseTransmitMode('bogus')).toBe(TransmitMode.Never);
   });
 });

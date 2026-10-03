@@ -26,7 +26,7 @@ describe('Config.load', () => {
     expect(config.baseUrl).toBe('https://example.com'); // trailing slash stripped
     expect(config.projectId).toBe('p1');
     expect(config.token).toBe('t1');
-    expect(config.transmitFiles).toBe(TransmitMode.Always);
+    expect(config.transmitFiles).toBe(TransmitMode.Never);
   });
 
   it('loads values from a .js config file (CJS module.exports)', async () => {
